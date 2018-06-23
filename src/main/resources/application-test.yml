@@ -1,0 +1,9 @@
+spring:
+    profiles:
+        active: test
+    datasource:
+        driverClassName: com.mysql.jdbc.Driver
+        url: jdbc:mysql://localhost:3306/homework_test?useUnicode=true&characterEncoding=utf8
+        username: root
+        password: password
+
