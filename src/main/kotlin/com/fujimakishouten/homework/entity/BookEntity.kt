@@ -1,5 +1,6 @@
 package com.fujimakishouten.homework.entity
 
+import jdk.nashorn.internal.objects.annotations.Getter
 import javax.persistence.*
 
 @Entity
@@ -16,6 +17,14 @@ data class BookEntity (
     @Column(name="author_id", nullable=false)
     var author_id: Int = 0,
 
+    @ManyToOne(fetch=FetchType.EAGER)
+    @JoinColumn(name="author_id", insertable=false, updatable=false)
+    var author: AuthorEntity? = null,
+
     @Column(name="publisher_id", nullable=false)
-    var publisher_id: Int = 0
+    var publisher_id: Int = 0,
+
+    @ManyToOne(fetch=FetchType.EAGER)
+    @JoinColumn(name="publisher_id", insertable=false, updatable=false)
+    var publisher: PublisherEntity? = null
 )
