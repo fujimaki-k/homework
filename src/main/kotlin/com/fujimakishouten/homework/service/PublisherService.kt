@@ -10,6 +10,9 @@ class PublisherService {
     @Autowired
     lateinit var repository: PublisherRepository
 
+    @Autowired
+    lateinit var sanitize: SanitizeService
+
 
     /**
      * 全ての出版社データを取得する
@@ -46,5 +49,29 @@ class PublisherService {
      */
     fun delete(data: PublisherEntity) {
         return repository.delete(data)
+    }
+
+    /**
+     * 著者データを正規化する
+     *
+     * @param PublisherEntity
+     * @return AuthorEntity
+     */
+    fun sanitize(data: PublisherEntity): PublisherEntity {
+        data.name = sanitize.normalize(data.name)
+
+        return data
+    }
+
+    /**
+     * 著者データをチェックする
+     *
+     * @param PublisherEntity
+     * @throws RuntimeException
+     */
+    fun validate(data: PublisherEntity) {
+        if (data.name.length < 1 || data.name.length > 255) {
+            throw RuntimeException("Invalid name")
+        }
     }
 }

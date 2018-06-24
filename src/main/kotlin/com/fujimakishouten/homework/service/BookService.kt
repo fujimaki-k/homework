@@ -4,11 +4,21 @@ import com.fujimakishouten.homework.entity.BookEntity
 import com.fujimakishouten.homework.repository.BookRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import javax.transaction.Transactional
 
 @Service
 class BookService {
     @Autowired
     lateinit var repository: BookRepository
+
+    @Autowired
+    lateinit var authorService: AuthorService
+
+    @Autowired
+    lateinit var publisherService: PublisherService
+
+    @Autowired
+    lateinit var sanitize: SanitizeService
 
     /**
      * 全ての本のデータを取得する
@@ -43,6 +53,7 @@ class BookService {
      * @param BookEntity
      * @return BookEntity
      */
+    @Transactional
     fun save(data: BookEntity): BookEntity {
         return repository.save(data)
     }
@@ -54,5 +65,39 @@ class BookService {
      */
     fun delete(data: BookEntity) {
         return repository.delete(data)
+    }
+
+    /**
+     * 著者データを正規化する
+     *
+     * @param AutherEntity
+     * @return AuthorEntity
+     */
+    fun sanitize(data: BookEntity): BookEntity {
+        data.title = sanitize.normalize(data.title)
+
+        return data
+    }
+
+    /**
+     * 著者データをチェックする
+     *
+     * @param AuthorEntity
+     * @throws RuntimeException
+     */
+    fun validate(data: BookEntity) {
+        if (data.title.length < 1 || data.title.length > 255) {
+            throw RuntimeException("Invalid name")
+        }
+
+        val author = authorService.findById(data.author_id)
+        if (author == null) {
+            throw RuntimeException("Invalid author ID")
+        }
+
+        val publisher = publisherService.findById(data.publisher_id)
+        if (publisher == null) {
+            throw RuntimeException("Invalid publisher ID")
+        }
     }
 }

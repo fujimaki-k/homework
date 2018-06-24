@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <a href="/author/add" title="書籍を追加する" th:href="@{/author/add}">著者を追加する</a>
+    <div th:unless="${#lists.size(books)}">
+        <p>書籍情報が登録されていません。</p>
+        <p>書籍情報の<a href="/book/add" title="書籍情報追加画面" th:href="@{/book/add}">追加画面</a>から、書籍情報を追加してください。</p>
+    </div>
+    <table th:if="${#lists.size(books)}">
+        <thead>
+            <tr>
+                <th>書籍 ID</th>
+                <th>タイトル</th>
+                <th>著者</th>
+                <th>出版社</th>
+                <th>削除</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="book : ${books}">
+                <td>[[${book.book_id}]]</td>
+                <td><a href="/book/edit" title="編集する" th:href="@{/book/edit/{id}(id=${book.book_id})}" th:title="|「${book.title}」を編集する|">[[${book.title}]]</a></td>
+                <td>[[${book.author.name}]]</td>
+                <td>[[${book.publisher.name}]]</td>
+                <td><a href="/book/remove" title="削除する" th:href="@{/book/remove/{id}(id=${book.book_id})}" th:title="|「${book.title}」を削除する|">削除</a></td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

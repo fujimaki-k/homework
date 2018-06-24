@@ -10,6 +10,9 @@ class AuthorService {
     @Autowired
     lateinit var repository: AuthorRepository
 
+    @Autowired
+    lateinit var sanitize: SanitizeService
+
     /**
      * 全ての著者データを取得する
      *
@@ -45,5 +48,29 @@ class AuthorService {
      */
     fun delete(data: AuthorEntity) {
         return repository.delete(data)
+    }
+
+    /**
+     * 著者データを正規化する
+     *
+     * @param AutherEntity
+     * @return AuthorEntity
+     */
+    fun sanitize(data: AuthorEntity): AuthorEntity {
+        data.name = sanitize.normalize(data.name)
+
+        return data
+    }
+
+    /**
+     * 著者データをチェックする
+     *
+     * @param AuthorEntity
+     * @throws RuntimeException
+     */
+    fun validate(data: AuthorEntity) {
+        if (data.name.length < 1 || data.name.length > 255) {
+            throw RuntimeException("Invalid name")
+        }
     }
 }

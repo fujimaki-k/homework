@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <a href="/author/add" title="著者を追加する" th:href="@{/author/add}">著者を追加する</a>
+    <div th:unless="${#lists.size(authors)}">
+        <p>著者情報が登録されていません。</p>
+        <p>著者情報の<a href="/author/add" title="著者情報追加画面" th:href="@{/author/add}">追加画面</a>から、著者情報を追加してください。</p>
+    </div>
+    <table th:if="${#lists.size(authors)}">
+        <thead>
+            <tr>
+                <th>著者 ID</th>
+                <th>著者名</th>
+                <th>削除</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="author : ${authors}">
+                <td>[[${author.author_id}]]</td>
+                <td><a href="/author/edit" title="編集する" th:href="@{/author/edit/{id}(id=${author.author_id})}" th:title="|「${author.name}」を編集する|">[[${author.name}]]</a></td>
+                <td><a href="/author/remove" title="削除する" th:href="@{/author/remove/{id}(id=${author.author_id})}" th:title="|「${author.name}」を削除する|">削除</a></td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>
