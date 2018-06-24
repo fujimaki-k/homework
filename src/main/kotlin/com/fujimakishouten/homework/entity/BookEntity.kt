@@ -2,6 +2,8 @@ package com.fujimakishouten.homework.entity
 
 import jdk.nashorn.internal.objects.annotations.Getter
 import javax.persistence.*
+import javax.validation.constraints.NotEmpty
+import javax.validation.constraints.Size
 
 @Entity
 @Table(name="books")
@@ -12,6 +14,8 @@ data class BookEntity (
     var book_id: Int? = null,
 
     @Column(name="title", length=255, nullable=false)
+    @NotEmpty
+    @Size(min=1, max=255)
     var title: String = "",
 
     @Column(name="author_id", nullable=false)
