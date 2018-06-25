@@ -100,6 +100,97 @@ class BookServiceTests {
     }
 
     @Test
+    fun ShouldGetSearchResult() {
+        val allParameters = book.search("だよ", 1, 1)
+        val titleOnly = book.search("だよ", null, null)
+        val authorOnly = book.search(null, 1, null)
+        val publisherOnly = book.search(null, null, 2)
+
+        val authorAll = allParameters[0].author
+        val publisherAll = allParameters[0].publisher
+        assertThat(allParameters).hasSize(1)
+        assertThat(allParameters[0].book_id).isEqualTo(1)
+        assertThat(allParameters[0].title).isEqualTo("ファイトだよっ！")
+        assertThat(allParameters[0].author_id).isEqualTo(1)
+        assertThat(allParameters[0].publisher_id).isEqualTo(1)
+        assertThat(allParameters[0].author).isNotNull()
+        if (authorAll is AuthorEntity) {
+            assertThat(authorAll.author_id).isEqualTo(allParameters[0].author_id)
+            assertThat(authorAll.name).isEqualTo("高坂穂乃果")
+        }
+        assertThat(publisherAll).isNotNull()
+        if (publisherAll is PublisherEntity) {
+            assertThat(publisherAll.publisher_id).isEqualTo(allParameters[0].publisher_id)
+            assertThat(publisherAll.name).isEqualTo("Printemps")
+        }
+
+        val authorTitleOnly = titleOnly[0].author
+        val publisherTitleOnly = titleOnly[0].publisher
+        assertThat(titleOnly).hasSize(1)
+        assertThat(titleOnly[0].book_id).isEqualTo(1)
+        assertThat(titleOnly[0].title).isEqualTo("ファイトだよっ！")
+        assertThat(titleOnly[0].author_id).isEqualTo(1)
+        assertThat(titleOnly[0].publisher_id).isEqualTo(1)
+        assertThat(titleOnly[0].author).isNotNull()
+        if (authorTitleOnly is AuthorEntity) {
+            assertThat(authorTitleOnly.author_id).isEqualTo(titleOnly[0].author_id)
+            assertThat(authorTitleOnly.name).isEqualTo("高坂穂乃果")
+        }
+        assertThat(publisherTitleOnly).isNotNull()
+        if (publisherTitleOnly is PublisherEntity) {
+            assertThat(publisherTitleOnly.publisher_id).isEqualTo(titleOnly[0].publisher_id)
+            assertThat(publisherTitleOnly.name).isEqualTo("Printemps")
+        }
+
+        val authorAuthorOnly = authorOnly[0].author
+        val publisherAuthoreOnly = authorOnly[0].publisher
+        assertThat(authorOnly).hasSize(1)
+        assertThat(authorOnly[0].book_id).isEqualTo(1)
+        assertThat(authorOnly[0].title).isEqualTo("ファイトだよっ！")
+        assertThat(authorOnly[0].author_id).isEqualTo(1)
+        assertThat(authorOnly[0].publisher_id).isEqualTo(1)
+        assertThat(authorOnly[0].author).isNotNull()
+        if (authorAuthorOnly is AuthorEntity) {
+            assertThat(authorAuthorOnly.author_id).isEqualTo(authorOnly[0].author_id)
+            assertThat(authorAuthorOnly.name).isEqualTo("高坂穂乃果")
+        }
+        assertThat(publisherAuthoreOnly).isNotNull()
+        if (publisherAuthoreOnly is PublisherEntity) {
+            assertThat(publisherAuthoreOnly.publisher_id).isEqualTo(authorOnly[0].publisher_id)
+            assertThat(publisherAuthoreOnly.name).isEqualTo("Printemps")
+        }
+
+        val authorPublisherOnly = publisherOnly[0].author
+        val publisherPublisherOnly = publisherOnly[0].publisher
+        assertThat(publisherOnly).hasSize(1)
+        assertThat(publisherOnly[0].book_id).isEqualTo(3)
+        assertThat(publisherOnly[0].title).isEqualTo("ラブアローシュート！")
+        assertThat(publisherOnly[0].author_id).isEqualTo(3)
+        assertThat(publisherOnly[0].publisher_id).isEqualTo(2)
+        assertThat(publisherOnly[0].author).isNotNull()
+        if (authorPublisherOnly is AuthorEntity) {
+            assertThat(authorPublisherOnly.author_id).isEqualTo(publisherOnly[0].author_id)
+            assertThat(authorPublisherOnly.name).isEqualTo("園田海未")
+        }
+        assertThat(publisherAuthoreOnly).isNotNull()
+        if (publisherPublisherOnly is PublisherEntity) {
+            assertThat(publisherPublisherOnly.publisher_id).isEqualTo(publisherOnly[0].publisher_id)
+            assertThat(publisherPublisherOnly.name).isEqualTo("lily white")
+        }
+    }
+
+    @Test
+    fun ShouldNotGetSearchResult() {
+        val titleUnmatch = book.search("サイトだよっ", null, null)
+        val authorUnmatch = book.search(null, 2, 2)
+        val publisherUnmatch = book.search(null, 1, 2)
+
+        assertThat(titleUnmatch).hasSize(0)
+        assertThat(authorUnmatch).hasSize(0)
+        assertThat(publisherUnmatch).hasSize(0)
+    }
+
+    @Test
     fun ShouldGetBookById() {
         val result = book.findById(1)
 
@@ -132,9 +223,9 @@ class BookServiceTests {
     @Test
     fun ShouldSaveBook() {
         val data = BookEntity(
-            title = "あんこ飽きた",
-            author_id = 1,
-            publisher_id = 1
+                title = "あんこ飽きた",
+                author_id = 1,
+                publisher_id = 1
         )
         val result = book.save(data)
         assertThat(result.title).isEqualTo(data.title)
@@ -147,9 +238,9 @@ class BookServiceTests {
     @Test
     fun ShouldUpdateBook() {
         val data = BookEntity(
-            title = "やるったらやる！",
-            author_id = 1,
-            publisher_id = 1
+                title = "やるったらやる！",
+                author_id = 1,
+                publisher_id = 1
         )
         val book_title = "やり遂げたよ。最後までーー！"
         val from = book.save(data)
@@ -169,9 +260,9 @@ class BookServiceTests {
     @Test
     fun ShouldRemovePublisher() {
         val data = BookEntity(
-            title = "あなたは最低です",
-            author_id = 3,
-            publisher_id = 2
+                title = "あなたは最低です",
+                author_id = 3,
+                publisher_id = 2
         )
         val saved = book.save(data)
         val book_id = saved.book_id

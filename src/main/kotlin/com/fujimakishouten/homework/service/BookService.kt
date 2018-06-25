@@ -4,7 +4,11 @@ import com.fujimakishouten.homework.entity.BookEntity
 import com.fujimakishouten.homework.repository.BookRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import javax.persistence.EntityManager
 import javax.transaction.Transactional
+import java.util.ArrayList
+import javax.persistence.criteria.Predicate
+
 
 @Service
 class BookService {
@@ -16,6 +20,9 @@ class BookService {
 
     @Autowired
     lateinit var publisherService: PublisherService
+
+    @Autowired
+    lateinit var entityManager: EntityManager
 
     @Autowired
     lateinit var sanitize: SanitizeService
@@ -45,6 +52,31 @@ class BookService {
      */
     fun findById(id: Int): BookEntity? {
         return repository.findById(id).orElse(null)
+    }
+
+    fun search(title: String?, author_id: Int?, publisher_id: Int?): List<BookEntity> {
+        val builder = entityManager.getCriteriaBuilder()
+        val query = builder.createQuery(BookEntity::class.java)
+        val root = query.from(BookEntity::class.java)
+        val predicates: ArrayList<Predicate> = ArrayList()
+        if (title != null) {
+            predicates.add(builder.like(root.get<String>("title"), "%%%s%%".format(title)))
+        }
+        if (author_id != null) {
+            predicates.add(builder.equal(root.get<String>("author_id"), author_id))
+        }
+        if (publisher_id != null) {
+            predicates.add(builder.equal(root.get<String>("publisher_id"), publisher_id))
+        }
+
+        query.select(root)
+        if (predicates.isNotEmpty()) {
+            query.where(builder.and(*Array(predicates.size, {i -> predicates[i]})))
+        }
+
+        val result = entityManager.createQuery(query).resultList
+
+        return result
     }
 
     /**
