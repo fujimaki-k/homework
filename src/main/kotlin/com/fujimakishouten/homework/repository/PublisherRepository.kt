@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface PublisherRepository: JpaRepository<PublisherEntity, Int> {
+    fun findByNameContainingOrderByNameAsc(name: String): List<PublisherEntity>
+
 }

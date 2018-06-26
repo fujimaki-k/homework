@@ -24,10 +24,11 @@ class BookController {
     @GetMapping("/book", "/book/index")
     fun getIndex(model: ModelAndView, @RequestParam title: String?, @RequestParam author_id: Int?, @RequestParam publisher_id: Int?): ModelAndView {
         val data: List<BookEntity>
+        val query: Boolean
         val authors = author.findAll()
         val publishers = publisher.findAll()
-        var query = false
         if (title == null && author_id == null && publisher_id == null) {
+            query = false
             data = book.findAll()
         } else {
             query = true

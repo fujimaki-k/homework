@@ -5,10 +5,7 @@ import com.fujimakishouten.homework.service.AuthorService
 import com.fujimakishouten.homework.service.SanitizeService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.ModelAttribute
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.ModelAndView
 
 @Controller
@@ -17,10 +14,21 @@ class AuthorController {
     lateinit var author: AuthorService;
 
     @GetMapping("/author", "/author/index")
-    fun getIndex(model: ModelAndView): ModelAndView {
-        val data = author.findAll()
+    fun getIndex(model: ModelAndView, @RequestParam name: String?): ModelAndView {
+        val data: List<AuthorEntity>
+        val query: Boolean
+        if (name == null) {
+            query = false
+            data = author.findAll()
+        } else {
+            query = true
+            data = author.findByName(name)
+        }
+
         model.viewName = "author/index"
         model.addObject("authors", data)
+        model.addObject("name", name?: "")
+        model.addObject("query", query)
 
         return model
     }

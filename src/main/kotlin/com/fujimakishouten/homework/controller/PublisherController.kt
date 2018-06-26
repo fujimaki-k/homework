@@ -5,10 +5,7 @@ import com.fujimakishouten.homework.service.PublisherService
 import com.fujimakishouten.homework.service.SanitizeService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.ModelAttribute
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.ModelAndView
 
 @Controller
@@ -17,10 +14,21 @@ class PublisherController {
     lateinit var publisher: PublisherService;
 
     @GetMapping("/publisher", "/publisher/index")
-    fun getIndex(model: ModelAndView): ModelAndView {
-        val data = publisher.findAll()
+    fun getIndex(model: ModelAndView, @RequestParam name: String?): ModelAndView {
+        val data: List<PublisherEntity>
+        val query: Boolean
+        if (name == null) {
+            query = false
+            data = publisher.findAll()
+        } else {
+            query = true
+            data = publisher.findByName(name)
+        }
+
         model.viewName = "publisher/index"
         model.addObject("publishers", data)
+        model.addObject("name", name?: "")
+        model.addObject("query", query)
 
         return model
     }

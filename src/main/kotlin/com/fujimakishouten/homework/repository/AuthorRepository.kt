@@ -7,4 +7,5 @@ import java.util.*
 
 @Repository
 interface AuthorRepository: JpaRepository<AuthorEntity, Int> {
+    fun findByNameContainingOrderByNameAsc(name: String): List<AuthorEntity>
 }

@@ -33,6 +33,15 @@ class PublisherService {
     }
 
     /**
+     * 出版社の名前を指定して該当するものを取得する
+     *
+     * @param String    出版社の名前またはその一部
+     */
+    fun findByName(name: String): List<PublisherEntity> {
+        return repository.findByNameContainingOrderByNameAsc(name)
+    }
+
+    /**
      * 出版社データを保存する
      *
      * @param PublisherEntity

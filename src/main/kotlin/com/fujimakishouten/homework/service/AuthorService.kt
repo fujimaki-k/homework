@@ -32,6 +32,15 @@ class AuthorService {
     }
 
     /**
+     * 著者の名前を指定して該当するものを取得する
+     *
+     * @param String    著者の名前またはその一部
+     */
+    fun findByName(name: String): List<AuthorEntity> {
+        return repository.findByNameContainingOrderByNameAsc(name)
+    }
+
+    /**
      * 著者データを保存する
      *
      * @param AuthorEntity
