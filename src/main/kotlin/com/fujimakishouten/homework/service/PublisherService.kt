@@ -67,11 +67,15 @@ class PublisherService {
      * 著者データをチェックする
      *
      * @param PublisherEntity
-     * @throws RuntimeException
+     * @return MutableMap<String, RuntimeException>
      */
-    fun validate(data: PublisherEntity) {
+    fun validate(data: PublisherEntity): MutableMap<String, RuntimeException> {
+        val errors = mutableMapOf<String, RuntimeException>()
+
         if (data.name.length < 1 || data.name.length > 255) {
-            throw RuntimeException("Invalid name")
+            errors.put("name", RuntimeException("Invalid name"))
         }
+
+        return errors
     }
 }

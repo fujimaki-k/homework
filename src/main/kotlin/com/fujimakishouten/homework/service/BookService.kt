@@ -115,21 +115,25 @@ class BookService {
      * 著者データをチェックする
      *
      * @param AuthorEntity
-     * @throws RuntimeException
+     * @return MutableMap<String, RuntimeException>
      */
-    fun validate(data: BookEntity) {
+    fun validate(data: BookEntity): MutableMap<String, RuntimeException> {
+        val errors = mutableMapOf<String, RuntimeException>()
+
         if (data.title.length < 1 || data.title.length > 255) {
-            throw RuntimeException("Invalid name")
+            errors.put("title", RuntimeException("Invalid title"))
         }
 
         val author = authorService.findById(data.author_id)
         if (author == null) {
-            throw RuntimeException("Invalid author ID")
+            errors.put("author_id", RuntimeException("Invalid author ID"))
         }
 
         val publisher = publisherService.findById(data.publisher_id)
         if (publisher == null) {
-            throw RuntimeException("Invalid publisher ID")
+            errors.put("publisher_id", RuntimeException("Invalid publisher ID"))
         }
+
+        return errors
     }
 }

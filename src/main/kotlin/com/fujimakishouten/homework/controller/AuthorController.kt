@@ -28,22 +28,26 @@ class AuthorController {
     @GetMapping("/author/add")
     fun getAdd(model: ModelAndView, sanitize: SanitizeService): ModelAndView {
         model.viewName = "author/form"
+        model.addObject("author", AuthorEntity())
 
         return model
     }
 
     @PostMapping("/author/add")
     fun postAdd(model: ModelAndView, @ModelAttribute("formData") data: AuthorEntity): ModelAndView {
+        // サニタイズ後のデータをバリデーションしたいので @Validated は使わない
         val parameters = author.sanitize(data)
-        try {
-            // サニタイズ後の値をバリデーションしたかったので @Validated ではなく独自で実装
-            author.validate(parameters)
+        val errors = author.validate(parameters)
+        if (errors.isEmpty()) {
             author.save(parameters)
-
             model.viewName = "redirect:/author"
-        } catch (e: RuntimeException) {
-            model.viewName = "author/form"
+
+            return model
         }
+
+        model.viewName = "author/form"
+        model.addObject("errors", errors)
+        model.addObject("author", data)
 
         return model
     }
@@ -52,9 +56,7 @@ class AuthorController {
     fun getEdit(model: ModelAndView, @PathVariable author_id: Int, @ModelAttribute("formData") data: AuthorEntity): ModelAndView {
         val parameters = author.findById(author_id)
         model.viewName = "author/form"
-        if (parameters != null) {
-            model.addObject("author", parameters)
-        }
+        model.addObject("author", parameters?: AuthorEntity())
 
         return model
     }
@@ -62,25 +64,26 @@ class AuthorController {
     @PostMapping("/author/edit/{author_id}")
     fun postEdit(model: ModelAndView, @PathVariable author_id: Int, @ModelAttribute("formData") data: AuthorEntity): ModelAndView {
         val parameters = author.findById(author_id)
-        val form = author.sanitize(data)
         if (parameters == null) {
             model.viewName = "redirect:/author"
 
             return model
         }
-        parameters.name = form.name
 
-        try {
-            // サニタイズ後の値をバリデーションしたかったので @Validated ではなく独自で実装
-            author.validate(parameters)
+        val sanitized = author.sanitize(data)
+        parameters.name = sanitized.name
 
-
+        val errors = author.validate(parameters)
+        if (errors.isEmpty()) {
             author.save(parameters)
-
             model.viewName = "redirect:/author"
-        } catch (e: RuntimeException) {
-            model.viewName = "author/form"
+
+            return model
         }
+
+        model.viewName = "author/form"
+        model.addObject("errors", errors)
+        model.addObject("author", data)
 
         return model
     }

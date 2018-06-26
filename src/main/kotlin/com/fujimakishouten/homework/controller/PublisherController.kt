@@ -28,6 +28,7 @@ class PublisherController {
     @GetMapping("/publisher/add")
     fun getAdd(model: ModelAndView, sanitize: SanitizeService): ModelAndView {
         model.viewName = "publisher/form"
+        model.addObject("publisher", PublisherEntity())
 
         return model
     }
@@ -35,15 +36,17 @@ class PublisherController {
     @PostMapping("/publisher/add")
     fun postAdd(model: ModelAndView, @ModelAttribute("formData") data: PublisherEntity): ModelAndView {
         val parameters = publisher.sanitize(data)
-        try {
-            // サニタイズ後の値をバリデーションしたかったので @Validated ではなく独自で実装
-            publisher.validate(parameters)
+        val errors = publisher.validate(parameters)
+        if (errors.isEmpty()) {
             publisher.save(parameters)
-
             model.viewName = "redirect:/publisher"
-        } catch (e: RuntimeException) {
-            model.viewName = "publisher/form"
+
+            return model
         }
+
+        model.viewName = "publisher/form"
+        model.addObject("errors", errors)
+        model.addObject("publisher", data)
 
         return model
     }
@@ -52,9 +55,7 @@ class PublisherController {
     fun getEdit(model: ModelAndView, @PathVariable publisher_id: Int, @ModelAttribute("formData") data: PublisherEntity): ModelAndView {
         val parameters = publisher.findById(publisher_id)
         model.viewName = "publisher/form"
-        if (parameters != null) {
-            model.addObject("publisher", parameters)
-        }
+        model.addObject("publisher", parameters?: PublisherEntity())
 
         return model
     }
@@ -62,25 +63,26 @@ class PublisherController {
     @PostMapping("/publisher/edit/{publisher_id}")
     fun postEdit(model: ModelAndView, @PathVariable publisher_id: Int, @ModelAttribute("formData") data: PublisherEntity): ModelAndView {
         val parameters = publisher.findById(publisher_id)
-        val form = publisher.sanitize(data)
         if (parameters == null) {
             model.viewName = "redirect:/publisher"
 
             return model
         }
-        parameters.name = form.name
 
-        try {
-            // サニタイズ後の値をバリデーションしたかったので @Validated ではなく独自で実装
-            publisher.validate(parameters)
+        val sanitized = publisher.sanitize(data)
+        parameters.name = sanitized.name
 
-
+        val errors = publisher.validate(parameters)
+        if (errors.isEmpty()) {
             publisher.save(parameters)
-
             model.viewName = "redirect:/publisher"
-        } catch (e: RuntimeException) {
-            model.viewName = "publisher/form"
+
+            return model
         }
+
+        model.viewName = "publisher/form"
+        model.addObject("errors", errors)
+        model.addObject("publisher", data)
 
         return model
     }

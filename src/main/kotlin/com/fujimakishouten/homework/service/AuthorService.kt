@@ -66,11 +66,15 @@ class AuthorService {
      * 著者データをチェックする
      *
      * @param AuthorEntity
-     * @throws RuntimeException
+     * @return MutableMap<String, RuntimeException>
      */
-    fun validate(data: AuthorEntity) {
+    fun validate(data: AuthorEntity): MutableMap<String, RuntimeException> {
+        val errors = mutableMapOf<String, RuntimeException>()
+
         if (data.name.length < 1 || data.name.length > 255) {
-            throw RuntimeException("Invalid name")
+            errors.put("name", RuntimeException("Invalid name"))
         }
+
+        return errors
     }
 }
