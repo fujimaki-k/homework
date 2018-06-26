@@ -23,12 +23,8 @@ class HelloControllerTests {
     @Autowired
     lateinit var mock: MockMvc
 
-    @Value("\${debug}")
-    lateinit var debug: String
-
     @Test
     fun ShouldGetGreetingMessage() {
-        println(debug)
         mock.perform(get("/hello"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("Hello, world.")))
