@@ -14,15 +14,13 @@ class PublisherController {
     lateinit var publisher: PublisherService;
 
     @GetMapping("/publisher", "/publisher/index")
-    fun getIndex(model: ModelAndView, @RequestParam name: String?): ModelAndView {
+    fun index(model: ModelAndView, @RequestParam name: String?): ModelAndView {
         val data: List<PublisherEntity>
-        val query: Boolean
-        if (name == null) {
-            query = false
-            data = publisher.findAll()
+        val query = (name != null)
+        if (query) {
+            data = publisher.findByName(name as String)
         } else {
-            query = true
-            data = publisher.findByName(name)
+            data = publisher.findAll()
         }
 
         model.viewName = "publisher/index"
@@ -33,53 +31,29 @@ class PublisherController {
         return model
     }
 
-    @GetMapping("/publisher/add")
-    fun getAdd(model: ModelAndView, sanitize: SanitizeService): ModelAndView {
-        model.viewName = "publisher/form"
-        model.addObject("publisher", PublisherEntity())
-
-        return model
-    }
-
-    @PostMapping("/publisher/add")
-    fun postAdd(model: ModelAndView, @ModelAttribute("formData") data: PublisherEntity): ModelAndView {
-        val parameters = publisher.sanitize(data)
-        val errors = publisher.validate(parameters)
-        if (errors.isEmpty()) {
-            publisher.save(parameters)
-            model.viewName = "redirect:/publisher"
-
-            return model
+    @GetMapping("/publisher/edit", "/publisher/edit/{publisher_id}")
+    fun form(model: ModelAndView, @PathVariable(required = false) publisher_id: Int?, @ModelAttribute("formData") data: PublisherEntity): ModelAndView {
+        var parameters = PublisherEntity()
+        if (publisher_id != null) {
+            parameters = publisher.findById(publisher_id)?: parameters
         }
 
         model.viewName = "publisher/form"
-        model.addObject("errors", errors)
-        model.addObject("publisher", data)
+        model.addObject("publisher", parameters)
 
         return model
     }
 
-    @GetMapping("/publisher/edit/{publisher_id}")
-    fun getEdit(model: ModelAndView, @PathVariable publisher_id: Int, @ModelAttribute("formData") data: PublisherEntity): ModelAndView {
-        val parameters = publisher.findById(publisher_id)
-        model.viewName = "publisher/form"
-        model.addObject("publisher", parameters?: PublisherEntity())
-
-        return model
-    }
-
-    @PostMapping("/publisher/edit/{publisher_id}")
-    fun postEdit(model: ModelAndView, @PathVariable publisher_id: Int, @ModelAttribute("formData") data: PublisherEntity): ModelAndView {
-        val parameters = publisher.findById(publisher_id)
-        if (parameters == null) {
-            model.viewName = "redirect:/publisher"
-
-            return model
-        }
-
+    @PostMapping("/publisher/edit", "/publisher/edit/{publisher_id}")
+    fun edit(model: ModelAndView, @PathVariable(required = false) publisher_id: Int?, @ModelAttribute("formData") data: PublisherEntity): ModelAndView {
+        var parameters = PublisherEntity()
         val sanitized = publisher.sanitize(data)
+        if (publisher_id != null) {
+            parameters = publisher.findById(publisher_id)?: parameters
+        }
         parameters.name = sanitized.name
 
+        // サニタイズ後のデータをバリデーションしたいので @Validated は使わない
         val errors = publisher.validate(parameters)
         if (errors.isEmpty()) {
             publisher.save(parameters)
@@ -96,7 +70,7 @@ class PublisherController {
     }
 
     @GetMapping("/publisher/remove/{publisher_id}")
-    fun getRemove(model: ModelAndView, @PathVariable publisher_id: Int): ModelAndView {
+    fun remove(model: ModelAndView, @PathVariable publisher_id: Int): ModelAndView {
         val data = publisher.findById(publisher_id)
         if (data != null) {
             publisher.delete(data)

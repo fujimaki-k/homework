@@ -22,17 +22,15 @@ class BookController {
     lateinit var publisher: PublisherService
 
     @GetMapping("/book", "/book/index")
-    fun getIndex(model: ModelAndView, @RequestParam title: String?, @RequestParam author_id: Int?, @RequestParam publisher_id: Int?): ModelAndView {
+    fun index(model: ModelAndView, @RequestParam title: String?, @RequestParam author_id: Int?, @RequestParam publisher_id: Int?): ModelAndView {
         val data: List<BookEntity>
-        val query: Boolean
+        val query = (title != null || author_id != null || publisher_id != null)
         val authors = author.findAll()
         val publishers = publisher.findAll()
-        if (title == null && author_id == null && publisher_id == null) {
-            query = false
-            data = book.findAll()
-        } else {
-            query = true
+        if (query) {
             data = book.search(title, author_id, publisher_id)
+        } else {
+            data = book.findAll()
         }
 
         model.viewName = "book/index"
@@ -47,66 +45,35 @@ class BookController {
         return model
     }
 
-    @GetMapping("/book/add")
-    fun getAdd(model: ModelAndView, sanitize: SanitizeService): ModelAndView {
+    @GetMapping("/book/edit", "/book/edit/{book_id}")
+    fun form(model: ModelAndView, @PathVariable(required = false) book_id: Int?, @ModelAttribute("formData") data: BookEntity): ModelAndView {
         val authors = author.findAll()
         val publishers = publisher.findAll()
+        var parameters = BookEntity()
+        if (book_id != null) {
+            parameters = book.findById(book_id)?: parameters
+        }
 
         model.viewName = "book/form"
-        model.addObject("book", BookEntity())
+        model.addObject("book", parameters)
         model.addObject("authors", authors)
         model.addObject("publishers", publishers)
 
         return model
     }
 
-    @PostMapping("/book/add")
-    fun postAdd(model: ModelAndView, @ModelAttribute("formData") data: BookEntity): ModelAndView {
-        // サニタイズ後のデータをバリデーションしたいので @Validated は使わない
-        val parameters = book.sanitize(data)
-        val errors = book.validate(parameters)
-        if (errors.isEmpty()) {
-            book.save(parameters)
-            model.viewName = "redirect:/book"
-
-            return model
-        }
-
-        model.viewName = "book/form"
-        model.addObject("errors", errors)
-        model.addObject("book", data)
-
-        return model
-    }
-
-    @GetMapping("/book/edit/{book_id}")
-    fun getEdit(model: ModelAndView, @PathVariable book_id: Int, @ModelAttribute("formData") data: BookEntity): ModelAndView {
-        val authors = author.findAll()
-        val publishers = publisher.findAll()
-        val parameters = book.findById(book_id)
-
-        model.viewName = "book/form"
-        model.addObject("book", parameters?: BookEntity())
-        model.addObject("authors", authors)
-        model.addObject("publishers", publishers)
-
-        return model
-    }
-
-    @PostMapping("/book/edit/{book_id}")
-    fun postEdit(model: ModelAndView, @PathVariable book_id: Int, @ModelAttribute("formData") data: BookEntity): ModelAndView {
-        val parameters = book.findById(book_id)
-        if (parameters == null) {
-            model.viewName = "redirect:/book"
-
-            return model
-        }
-
+    @PostMapping("/book/edit", "/book/edit/{book_id}")
+    fun edit(model: ModelAndView, @PathVariable(required = false) book_id: Int?, @ModelAttribute("formData") data: BookEntity): ModelAndView {
+        var parameters = BookEntity()
         val sanitized = book.sanitize(data)
+        if (book_id != null) {
+            parameters = book.findById(book_id)?: parameters
+        }
         parameters.title = sanitized.title
         parameters.author_id = sanitized.author_id
         parameters.publisher_id = sanitized.publisher_id
 
+        // サニタイズ後のデータをバリデーションしたいので @Validated は使わない
         val errors = book.validate(parameters)
         if (errors.isEmpty()) {
             book.save(parameters)
@@ -115,15 +82,19 @@ class BookController {
             return model
         }
 
+        val authors = author.findAll()
+        val publishers = publisher.findAll()
         model.viewName = "book/form"
         model.addObject("errors", errors)
-        model.addObject("book", data)
+        model.addObject("book", parameters)
+        model.addObject("authors", authors)
+        model.addObject("publishers", publishers)
 
         return model
     }
 
     @GetMapping("/book/remove/{book_id}")
-    fun getRemove(model: ModelAndView, @PathVariable book_id: Int): ModelAndView {
+    fun remove(model: ModelAndView, @PathVariable book_id: Int): ModelAndView {
         val data = book.findById(book_id)
         if (data != null) {
             book.delete(data)

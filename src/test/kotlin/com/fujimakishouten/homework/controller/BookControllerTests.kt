@@ -126,7 +126,7 @@ class BookControllerTests {
     fun ShouldAddBook() {
         val title = "幸せ行きのSMILING!"
         val redirectUrl = "/book"
-        val addRequest = post("/book/add")
+        val addRequest = post("/book/edit")
                 .param("title", title)
                 .param("author_id", "1")
                 .param("publisher_id", "1")
@@ -151,7 +151,7 @@ class BookControllerTests {
 
     @Test
     fun ShouldBeBookAddEnptyTitleError() {
-        val request = post("/book/add").param("title", "")
+        val request = post("/book/edit").param("title", "")
         val response = mock.perform(request).andReturn().response.getContentAsString()
 
         val alert = Jsoup.parse(response).body().selectFirst("div.alert-danger")
@@ -162,7 +162,7 @@ class BookControllerTests {
 
     @Test
     fun ShouldBeBookAddLongTitleError() {
-        val request = post("/book/add").param("title", "ほ".repeat(256))
+        val request = post("/book/edit").param("title", "ほ".repeat(256))
         val response = mock.perform(request).andReturn().response.getContentAsString()
 
         val alert = Jsoup.parse(response).body().selectFirst("div.alert-danger")
@@ -173,7 +173,7 @@ class BookControllerTests {
 
     @Test
     fun ShouldBeBookAddInvalidAuthorIdError() {
-        val request = post("/book/add")
+        val request = post("/book/edit")
                 .param("title", "ほ".repeat(255))
                 .param("author_id", "0")
                 .param("publisher_id", "1")
@@ -187,7 +187,7 @@ class BookControllerTests {
 
     @Test
     fun ShouldBeBookAddInvalidPublisherIdError() {
-        val request = post("/book/add")
+        val request = post("/book/edit")
                 .param("title", "ほ".repeat(255))
                 .param("author_id", "1")
                 .param("publisher_id", "0")
@@ -204,7 +204,7 @@ class BookControllerTests {
         val fromName = "幸せ行きのSMILING!"
         val toName = "私たちは未来の花"
         val redirectUrl = "/book"
-        val addBookRequest = post("/book/add")
+        val addBookRequest = post("/book/edit")
                 .param("title", fromName)
                 .param("author_id", "1")
                 .param("publisher_id", "1")
@@ -303,7 +303,7 @@ class BookControllerTests {
     fun ShouldDeleteBook() {
         val name = "幸せ行きのSMILING!"
         val redirectUrl = "/book"
-        val addBookRequest = post("/book/add")
+        val addBookRequest = post("/book/edit")
                 .param("title", name)
                 .param("author_id", "1")
                 .param("publisher_id", "1")

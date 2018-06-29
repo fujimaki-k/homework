@@ -72,7 +72,7 @@ class PublisherControllerTests {
     fun ShouldAddPublisher() {
         val name = "BiBi"
         val redirectUrl = "/publisher"
-        val addRequest = post("/publisher/add").param("name", name)
+        val addRequest = post("/publisher/edit").param("name", name)
         val addResponse = mock.perform(addRequest).andReturn().response
         assertThat(addResponse.status).isEqualTo(302)
         assertThat(addResponse.redirectedUrl).isEqualTo(redirectUrl)
@@ -92,7 +92,7 @@ class PublisherControllerTests {
 
     @Test
     fun ShouldBePublisherAddEnptyNameError() {
-        val request = post("/publisher/add").param("name", "")
+        val request = post("/publisher/edit").param("name", "")
         val response = mock.perform(request).andReturn().response.getContentAsString()
 
         val alert = Jsoup.parse(response).body().selectFirst("div.alert-danger")
@@ -103,7 +103,7 @@ class PublisherControllerTests {
 
     @Test
     fun ShouldBePublisherAddLongNameError() {
-        val request = post("/publisher/add").param("name", "ほ".repeat(256))
+        val request = post("/publisher/edit").param("name", "ほ".repeat(256))
         val response = mock.perform(request).andReturn().response.getContentAsString()
 
         val alert = Jsoup.parse(response).body().selectFirst("div.alert-danger")
@@ -117,7 +117,7 @@ class PublisherControllerTests {
         val fromName = "BiBi"
         val toName = "μ's"
         val redirectUrl = "/publisher"
-        val addPublisherRequest = post("/publisher/add").param("name", fromName)
+        val addPublisherRequest = post("/publisher/edit").param("name", fromName)
         val addPublisherResponse = mock.perform(addPublisherRequest).andReturn().response
         assertThat(addPublisherResponse.status).isEqualTo(302)
         assertThat(addPublisherResponse.redirectedUrl).isEqualTo(redirectUrl)
@@ -178,7 +178,7 @@ class PublisherControllerTests {
     fun ShouldDeletePublisher() {
         val name = "BiBi"
         val redirectUrl = "/publisher"
-        val addPublisherRequest = post("/publisher/add").param("name", name)
+        val addPublisherRequest = post("/publisher/edit").param("name", name)
         val addPublisherResponse = mock.perform(addPublisherRequest).andReturn().response
         assertThat(addPublisherResponse.status).isEqualTo(302)
         assertThat(addPublisherResponse.redirectedUrl).isEqualTo(redirectUrl)

@@ -66,40 +66,44 @@
         </fieldset>
     </form>
 
-    <div class="alert alert-info" th:if="${#lists.size(authors)} < 1 and !${query}">
-        <h4><span class="material-icons">info</span> Info</h4>
-        <p>著者が登録されていません。</p>
-        <p>著者の<a href="/author/add" title="著者を追加する" th:href="@{/author/add}">追加画面</a>から書籍を追加してください。</p>
-    </div>
 
-    <div class="alert alert-info" th:if="${#lists.size(authors)} < 1 and ${query}">
-        <h4><span class="material-icons">info</span> Info</h4>
-        <p>著者がみつかりませんでした。</p>
-        <p>条件を変更して、もう一度検索してください。</p>
-    </div>
+    <div class="container">
+        <div class="alert alert-info" th:if="${#lists.size(authors)} < 1 and !${query}">
+            <h4><span class="material-icons">info</span> Info</h4>
+            <p>著者が登録されていません。</p>
+            <p>著者の<a href="/author/edit" title="著者を追加する" th:href="@{/author/edit}">追加画面</a>から著者を追加してください。</p>
+        </div>
 
-    <div class="text-right">
-        <a href="/author/add" title="著者を追加する" class="btn btn-primary" th:href="@{/author/add}">
-            <span class="material-icons">add</span>
-            著者を追加する
-        </a>
+        <div class="alert alert-info" th:if="${#lists.size(authors)} < 1 and ${query}">
+            <h4><span class="material-icons">info</span> Info</h4>
+            <p>著者がみつかりませんでした。</p>
+            <p>条件を変更して、もう一度検索してください。</p>
+        </div>
+
+        <div class="text-right">
+            <a href="/author/edit" title="著者を追加する" class="btn btn-primary" th:href="@{/author/edit}">
+                <span class="material-icons">add</span>
+                著者を追加する
+            </a>
+        </div>
+
+        <table class="table table-striped table-hover" th:if="${#lists.size(authors)}">
+            <thead>
+            <tr>
+                <th>著者 ID</th>
+                <th>著者名</th>
+                <th>管理</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="author : ${authors}">
+                <td>[[${author.author_id}]]</td>
+                <td><a href="/author/edit" title="編集する" th:href="@{/author/edit/{id}(id=${author.author_id})}" th:title="|「${author.name}」を編集する|">[[${author.name}]]</a></td>
+                <td><a href="/author/remove" title="削除する" th:href="@{/author/remove/{id}(id=${author.author_id})}" th:title="|「${author.name}」を削除する|">削除する</a></td>
+            </tr>
+            </tbody>
+        </table>
     </div>
-    <table class="table table-striped table-hover" th:if="${#lists.size(authors)}">
-        <thead>
-        <tr>
-            <th>著者 ID</th>
-            <th>著者名</th>
-            <th>管理</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="author : ${authors}">
-            <td>[[${author.author_id}]]</td>
-            <td><a href="/author/edit" title="編集する" th:href="@{/author/edit/{id}(id=${author.author_id})}" th:title="|「${author.name}」を編集する|">[[${author.name}]]</a></td>
-            <td><a href="/author/remove" title="削除する" th:href="@{/author/remove/{id}(id=${author.author_id})}" th:title="|「${author.name}」を削除する|">削除する</a></td>
-        </tr>
-        </tbody>
-    </table>
 </div>
 </body>
 </html>

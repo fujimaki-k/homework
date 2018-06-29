@@ -87,7 +87,7 @@
     <div class="alert alert-info" th:if="${#lists.size(books)} < 1 and !${query}">
         <h4><span class="material-icons">info</span> Info</h4>
         <p>書籍が登録されていません。</p>
-        <p>書籍の<a href="/book/add" title="書籍を追加する" th:href="@{/book/add}">追加画面</a>から書籍を追加してください。</p>
+        <p>書籍の<a href="/book/edit" title="書籍を追加する" th:href="@{/book/edit}">追加画面</a>から書籍を追加してください。</p>
     </div>
 
     <div class="alert alert-info" th:if="${#lists.size(books)} < 1 and ${query}">
@@ -97,7 +97,7 @@
     </div>
 
     <div class="text-right">
-        <a href="/book/add" title="書籍を追加する" class="btn btn-primary" th:href="@{/book/add}">
+        <a href="/book/edit" title="書籍を追加する" class="btn btn-primary" th:href="@{/book/edit}">
             <span class="material-icons">add</span>
             書籍を追加する
         </a>

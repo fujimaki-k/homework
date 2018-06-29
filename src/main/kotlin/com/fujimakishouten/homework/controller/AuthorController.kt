@@ -14,15 +14,13 @@ class AuthorController {
     lateinit var author: AuthorService;
 
     @GetMapping("/author", "/author/index")
-    fun getIndex(model: ModelAndView, @RequestParam name: String?): ModelAndView {
+    fun index(model: ModelAndView, @RequestParam name: String?): ModelAndView {
         val data: List<AuthorEntity>
-        val query: Boolean
-        if (name == null) {
-            query = false
-            data = author.findAll()
+        val query = (name != null)
+        if (query) {
+            data = author.findByName(name as String)
         } else {
-            query = true
-            data = author.findByName(name)
+            data = author.findAll()
         }
 
         model.viewName = "author/index"
@@ -33,54 +31,29 @@ class AuthorController {
         return model
     }
 
-    @GetMapping("/author/add")
-    fun getAdd(model: ModelAndView, sanitize: SanitizeService): ModelAndView {
-        model.viewName = "author/form"
-        model.addObject("author", AuthorEntity())
-
-        return model
-    }
-
-    @PostMapping("/author/add")
-    fun postAdd(model: ModelAndView, @ModelAttribute("formData") data: AuthorEntity): ModelAndView {
-        // サニタイズ後のデータをバリデーションしたいので @Validated は使わない
-        val parameters = author.sanitize(data)
-        val errors = author.validate(parameters)
-        if (errors.isEmpty()) {
-            author.save(parameters)
-            model.viewName = "redirect:/author"
-
-            return model
+    @GetMapping("/author/edit", "/author/edit/{author_id}")
+    fun form(model: ModelAndView, @PathVariable(required = false) author_id: Int?, @ModelAttribute("formData") data: AuthorEntity): ModelAndView {
+        var parameters = AuthorEntity()
+        if (author_id != null) {
+            parameters = author.findById(author_id)?: parameters
         }
 
         model.viewName = "author/form"
-        model.addObject("errors", errors)
-        model.addObject("author", data)
+        model.addObject("author", parameters)
 
         return model
     }
 
-    @GetMapping("/author/edit/{author_id}")
-    fun getEdit(model: ModelAndView, @PathVariable author_id: Int, @ModelAttribute("formData") data: AuthorEntity): ModelAndView {
-        val parameters = author.findById(author_id)
-        model.viewName = "author/form"
-        model.addObject("author", parameters?: AuthorEntity())
-
-        return model
-    }
-
-    @PostMapping("/author/edit/{author_id}")
-    fun postEdit(model: ModelAndView, @PathVariable author_id: Int, @ModelAttribute("formData") data: AuthorEntity): ModelAndView {
-        val parameters = author.findById(author_id)
-        if (parameters == null) {
-            model.viewName = "redirect:/author"
-
-            return model
-        }
-
+    @PostMapping("/author/edit", "/author/edit/{author_id}")
+    fun edit(model: ModelAndView, @PathVariable(required = false) author_id: Int?, @ModelAttribute("formData") data: AuthorEntity): ModelAndView {
+        var parameters = AuthorEntity()
         val sanitized = author.sanitize(data)
+        if (author_id != null) {
+            parameters = author.findById(author_id)?: parameters
+        }
         parameters.name = sanitized.name
 
+        // サニタイズ後のデータをバリデーションしたいので @Validated は使わない
         val errors = author.validate(parameters)
         if (errors.isEmpty()) {
             author.save(parameters)
@@ -97,7 +70,7 @@ class AuthorController {
     }
 
     @GetMapping("/author/remove/{author_id}")
-    fun getRemove(model: ModelAndView, @PathVariable author_id: Int): ModelAndView {
+    fun remove(model: ModelAndView, @PathVariable author_id: Int): ModelAndView {
         val data = author.findById(author_id)
         if (data != null) {
             author.delete(data)

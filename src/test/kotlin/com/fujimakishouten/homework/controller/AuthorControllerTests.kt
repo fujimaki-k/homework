@@ -77,7 +77,7 @@ class AuthorControllerTests {
     fun ShouldAddAuthor() {
         val name = "西木野真姫"
         val redirectUrl = "/author"
-        val addRequest = post("/author/add").param("name", name)
+        val addRequest = post("/author/edit").param("name", name)
         val addResponse = mock.perform(addRequest).andReturn().response
         assertThat(addResponse.status).isEqualTo(302)
         assertThat(addResponse.redirectedUrl).isEqualTo(redirectUrl)
@@ -97,7 +97,7 @@ class AuthorControllerTests {
 
     @Test
     fun ShouldBeAuthorAddEnptyNameError() {
-        val request = post("/author/add").param("name", "")
+        val request = post("/author/edit").param("name", "")
         val response = mock.perform(request).andReturn().response.getContentAsString()
 
         val alert = Jsoup.parse(response).body().selectFirst("div.alert-danger")
@@ -108,7 +108,7 @@ class AuthorControllerTests {
 
     @Test
     fun ShouldBeAuthorAddLongNameError() {
-        val request = post("/author/add").param("name", "ほ".repeat(256))
+        val request = post("/author/edit").param("name", "ほ".repeat(256))
         val response = mock.perform(request).andReturn().response.getContentAsString()
 
         val alert = Jsoup.parse(response).body().selectFirst("div.alert-danger")
@@ -122,7 +122,7 @@ class AuthorControllerTests {
         val fromName = "星空凛"
         val toName = "小泉花陽"
         val redirectUrl = "/author"
-        val addAuthorRequest = post("/author/add").param("name", fromName)
+        val addAuthorRequest = post("/author/edit").param("name", fromName)
         val addAuthorResponse = mock.perform(addAuthorRequest).andReturn().response
         assertThat(addAuthorResponse.status).isEqualTo(302)
         assertThat(addAuthorResponse.redirectedUrl).isEqualTo(redirectUrl)
@@ -183,7 +183,7 @@ class AuthorControllerTests {
     fun ShouldDeleteAuthor() {
         val name = "矢澤にこ"
         val redirectUrl = "/author"
-        val addAuthorRequest = post("/author/add").param("name", name)
+        val addAuthorRequest = post("/author/edit").param("name", name)
         val addAuthorResponse = mock.perform(addAuthorRequest).andReturn().response
         assertThat(addAuthorResponse.status).isEqualTo(302)
         assertThat(addAuthorResponse.redirectedUrl).isEqualTo(redirectUrl)
