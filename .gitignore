@@ -25,3 +25,8 @@
 /dist/
 /nbdist/
 /.nb-gradle/
+
+### Node.js ###
+node_modules
+
+
