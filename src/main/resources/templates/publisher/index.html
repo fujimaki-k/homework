@@ -47,60 +47,67 @@
     </div>
 </header>
 
-<form method="get" action="/publisher" class="form-horizonal container" th:action="@{/publisher}" th:if="${#lists.size(publishers)} or ${query}">
-    <fieldset>
-        <legend>出版社検索</legend>
-        <div class="form-group">
-            <label for="name" class="col-lg-2 col-md-2">出版社名</label>
-            <div class="col-lg-10 col-md-10">
-                <input id="name" name="name" type="text" value="" maxlength="255" class="form-control" placeholder="出版社名の一部または、全部" th:value="${name}" />
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="col-lg-12 col-md-12 text-right">
-                <button id="button" type="submit" class="btn btn-primary">検索する</button>
-            </div>
-        </div>
-    </fieldset>
-</form>
-
 <div class="container">
-    <h2>Authors</h2>
-
-    <div class="alert alert-info" th:if="${#lists.size(publishers)} < 1 and !${query}">
-        <h4><span class="material-icons">info</span> Info</h4>
-        <p>出版社が登録されていません。</p>
-        <p>出版社の<a href="/publisher/add" title="出版社を追加する" th:href="@{/publisher/add}">追加画面</a>から出版社を追加してください。</p>
+    <div class="page-header">
+        <h2>Publishers</h2>
     </div>
 
-    <div class="alert alert-info" th:if="${#lists.size(publishers)} < 1 and ${query}">
-        <h4><span class="material-icons">info</span> Info</h4>
-        <p>出版社がみつかりませんでした。</p>
-        <p>条件を変更して、もう一度検索してください。</p>
+    <div class="container">
+        <h3>出版社検索</h3>
+        <form method="get" action="/publisher" class="form-horizonal container" th:action="@{/publisher}" th:if="${#lists.size(publishers)} or ${query}">
+            <fieldset>
+                <div class="form-group">
+                    <label for="name" class="col-lg-2 col-md-2">出版社名</label>
+                    <div class="col-lg-10 col-md-10">
+                        <input id="name" name="name" type="text" value="" maxlength="255" class="form-control" placeholder="出版社名の一部または、全部" th:value="${name}" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-lg-12 col-md-12 text-right">
+                        <button id="button" type="submit" class="btn btn-primary">検索する</button>
+                    </div>
+                </div>
+            </fieldset>
+        </form>
     </div>
 
-    <div class="text-right">
-        <a href="/publisher/add" title="出版社を追加する" class="btn btn-primary" th:href="@{/publisher/add}">
-            <span class="material-icons">add</span>
-            出版社を追加する
-        </a>
+    <div class="container">
+        <h3>出版社一覧</h3>
+        <div class="alert alert-info" th:if="${#lists.size(publishers)} < 1 and !${query}">
+            <h4><span class="material-icons">info</span> Info</h4>
+            <p>出版社が登録されていません。</p>
+            <p>出版社の<a href="/publisher/add" title="出版社を追加する" th:href="@{/publisher/add}">追加画面</a>から出版社を追加してください。</p>
+        </div>
+
+        <div class="alert alert-info" th:if="${#lists.size(publishers)} < 1 and ${query}">
+            <h4><span class="material-icons">info</span> Info</h4>
+            <p>出版社がみつかりませんでした。</p>
+            <p>条件を変更して、もう一度検索してください。</p>
+        </div>
+
+        <div class="text-right">
+            <a href="/publisher/add" title="出版社を追加する" class="btn btn-primary" th:href="@{/publisher/add}">
+                <span class="material-icons">add</span>
+                出版社を追加する
+            </a>
+        </div>
+        <table class="table table-striped table-hover" th:if="${#lists.size(publishers)}">
+            <thead>
+            <tr>
+                <th>出版社 ID</th>
+                <th>出版社名</th>
+                <th>管理</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="publisher : ${publishers}">
+                <td>[[${publisher.publisher_id}]]</td>
+                <td><a href="/publisher/edit" title="編集する" th:href="@{/publisher/edit/{id}(id=${publisher.publisher_id})}" th:title="|「${publisher.name}」を編集する|">[[${publisher.name}]]</a></td>
+                <td><a href="/publisher/remove" title="削除する" th:href="@{/publisher/remove/{id}(id=${publisher.publisher_id})}" th:title="|「${publisher.name}」を削除する|">削除する</a></td>
+            </tr>
+            </tbody>
+        </table>
     </div>
-    <table class="table table-striped table-hover" th:if="${#lists.size(publishers)}">
-        <thead>
-        <tr>
-            <th>出版社 ID</th>
-            <th>出版社名</th>
-            <th>管理</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="publisher : ${publishers}">
-            <td>[[${publisher.publisher_id}]]</td>
-            <td><a href="/publisher/edit" title="編集する" th:href="@{/publisher/edit/{id}(id=${publisher.publisher_id})}" th:title="|「${publisher.name}」を編集する|">[[${publisher.name}]]</a></td>
-            <td><a href="/publisher/remove" title="削除する" th:href="@{/publisher/remove/{id}(id=${publisher.publisher_id})}" th:title="|「${publisher.name}」を削除する|">削除</a></td>
-        </tr>
-        </tbody>
-    </table>
 </div>
 </body>
 </html>

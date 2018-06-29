@@ -1,6 +1,8 @@
 package com.fujimakishouten.homework.controller
 
+import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.containsString
+import org.jsoup.Jsoup
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -13,6 +15,9 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.xml.sax.InputSource
+import java.io.StringReader
+import javax.xml.parsers.DocumentBuilderFactory
 
 @RunWith(SpringRunner::class)
 @SpringBootTest
@@ -25,12 +30,10 @@ class HelloControllerTests {
 
     @Test
     fun ShouldGetGreetingMessage() {
-        mock.perform(get("/hello"))
-                .andExpect(status().isOk())
-                .andExpect(content().string(containsString("Hello, world.")))
-        mock.perform(get("/hello/test"))
-                .andExpect(status().isOk())
-                .andExpect(content().string(containsString("Hello, test.")))
+        val source = mock.perform(get("/hello")).andReturn().response.getContentAsString()
+        val document = Jsoup.parse(source)
+        val elements = document.body().select("p")
+        assertThat(elements.text()).isEqualTo("Hello, world.")
     }
 
 }

@@ -46,25 +46,25 @@
     </div>
 </header>
 
-<form method="get" action="/author" class="form-horizonal container" th:action="@{/author}" th:if="${#lists.size(authors)} or ${query}">
-    <fieldset>
-        <legend>著者検索</legend>
-        <div class="form-group">
-            <label for="name" class="col-lg-2 col-md-2">著者名</label>
-            <div class="col-lg-10 col-md-10">
-                <input id="name" name="name" type="text" value="" maxlength="255" class="form-control" placeholder="著者名の一部または、全部" th:value="${name}" />
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="col-lg-12 col-md-12 text-right">
-                <button id="button" type="submit" class="btn btn-primary">検索する</button>
-            </div>
-        </div>
-    </fieldset>
-</form>
-
 <div class="container">
     <h2>Authors</h2>
+
+    <form method="get" action="/author" class="form-horizonal container" th:action="@{/author}" th:if="${#lists.size(authors)} or ${query}">
+        <fieldset>
+            <legend>著者検索</legend>
+            <div class="form-group">
+                <label for="name" class="col-lg-2 col-md-2">著者名</label>
+                <div class="col-lg-10 col-md-10">
+                    <input id="name" name="name" type="text" value="" maxlength="255" class="form-control" placeholder="著者名の一部または、全部" th:value="${name}" />
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-lg-12 col-md-12 text-right">
+                    <button id="button" type="submit" class="btn btn-primary">検索する</button>
+                </div>
+            </div>
+        </fieldset>
+    </form>
 
     <div class="alert alert-info" th:if="${#lists.size(authors)} < 1 and !${query}">
         <h4><span class="material-icons">info</span> Info</h4>
