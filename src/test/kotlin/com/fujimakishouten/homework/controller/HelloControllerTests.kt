@@ -33,7 +33,16 @@ class HelloControllerTests {
         val source = mock.perform(get("/hello")).andReturn().response.getContentAsString()
         val document = Jsoup.parse(source)
         val elements = document.body().select("p")
-        assertThat(elements.text()).isEqualTo("Hello, world.")
+        assertThat(elements).hasSize(1)
+        assertThat(elements[0].text()).isEqualTo("Hello, world.")
     }
 
+    @Test
+    fun ShouldGetGreetingMessageWithParameter() {
+        val source = mock.perform(get("/hello/honoka")).andReturn().response.getContentAsString()
+        val document = Jsoup.parse(source)
+        val elements = document.body().select("p")
+        assertThat(elements).hasSize(1)
+        assertThat(elements[0].text()).isEqualTo("Hello, honoka.")
+    }
 }
