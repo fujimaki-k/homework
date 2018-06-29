@@ -77,29 +77,6 @@ class BookServiceTests {
     }
 
     @Test
-    fun ShouldGetBooksByTitle() {
-        val result = book.findByTitle("だよ")
-
-        val author = result[0].author
-        val publisher = result[0].publisher
-        assertThat(result).hasSize(1)
-        assertThat(result[0].book_id).isEqualTo(1)
-        assertThat(result[0].title).isEqualTo("ファイトだよっ！")
-        assertThat(result[0].author_id).isEqualTo(1)
-        assertThat(result[0].publisher_id).isEqualTo(1)
-        assertThat(author).isNotNull()
-        if (author is AuthorEntity) {
-            assertThat(author.author_id).isEqualTo(result[0].author_id)
-            assertThat(author.name).isEqualTo("高坂穂乃果")
-        }
-        assertThat(publisher).isNotNull()
-        if (publisher is PublisherEntity) {
-            assertThat(publisher.publisher_id).isEqualTo(result[0].publisher_id)
-            assertThat(publisher.name).isEqualTo("Printemps")
-        }
-    }
-
-    @Test
     fun ShouldGetSearchResult() {
         val allParameters = book.search("だよ", 1, 1)
         val titleOnly = book.search("だよ", null, null)

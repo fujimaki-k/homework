@@ -28,7 +28,7 @@ class BookService {
     lateinit var sanitize: SanitizeService
 
     /**
-     * 全ての本のデータを取得する
+     * 全書籍のデータを取得する
      *
      * @return List<BookEntity>
      */
@@ -37,23 +37,18 @@ class BookService {
     }
 
     /**
-     * 本のタイトルを指定して該当するものを取得する
+     * 書籍 ID を指定して出版社データを取得する
      *
-     * @param String    本のタイトルまたはその一部
-     */
-    fun findByTitle(title: String): List<BookEntity> {
-        return repository.findByTitleContainingOrderByTitleAsc(title)
-    }
-
-    /**
-     * 本 ID を指定して出版社データを取得する
-     *
-     * @param Int 本 ID
+     * @param Int 書籍 ID
      */
     fun findById(id: Int): BookEntity? {
         return repository.findById(id).orElse(null)
     }
 
+    /**
+     * タイトル、著者、出版社から書籍を検索する
+     *
+     */
     fun search(title: String?, author_id: Int?, publisher_id: Int?): List<BookEntity> {
         val builder = entityManager.getCriteriaBuilder()
         val query = builder.createQuery(BookEntity::class.java)
@@ -80,7 +75,7 @@ class BookService {
     }
 
     /**
-     * 本データを保存する
+     * 書籍データを保存する
      *
      * @param BookEntity
      * @return BookEntity
@@ -91,7 +86,7 @@ class BookService {
     }
 
     /**
-     * 本データを削除する
+     * 書籍データを削除する
      *
      * @param BookEntity
      */
