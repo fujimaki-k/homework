@@ -1,6 +1,7 @@
 package com.fujimakishouten.homework.controller
 
 import com.fujimakishouten.homework.entity.PublisherEntity
+import com.fujimakishouten.homework.service.BookService
 import com.fujimakishouten.homework.service.PublisherService
 import com.fujimakishouten.homework.service.SanitizeService
 import org.springframework.beans.factory.annotation.Autowired
@@ -12,6 +13,9 @@ import org.springframework.web.servlet.ModelAndView
 class PublisherController {
     @Autowired
     lateinit var publisher: PublisherService;
+
+    @Autowired
+    lateinit var book: BookService;
 
     @GetMapping("/publisher", "/publisher/index")
     fun index(model: ModelAndView, @RequestParam name: String?): ModelAndView {
@@ -72,11 +76,21 @@ class PublisherController {
     @GetMapping("/publisher/remove/{publisher_id}")
     fun remove(model: ModelAndView, @PathVariable publisher_id: Int): ModelAndView {
         val data = publisher.findById(publisher_id)
-        if (data != null) {
-            publisher.delete(data)
+        if (data == null) {
+            model.viewName = "redirect:/author"
+
+            return model
         }
 
-        model.viewName = "redirect:/publisher"
+        val books = book.search(null, null, publisher_id)
+        if (books.size > 0) {
+            model.viewName = "publisher/remove"
+            model.addObject("publisher", data)
+
+            return model
+        }
+        publisher.delete(data)
+        model.viewName = "redirect:/author"
 
         return model
     }

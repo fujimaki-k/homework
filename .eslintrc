@@ -1,0 +1,15 @@
+{
+    "env": {
+        "browser": false,
+        "commonjs": false,
+        "es6": true,
+        "mocha": true,
+        "node": true
+    },
+    "parserOptions":{
+        "ecmaVersion": 2016,
+        "sourceType": "script"
+    },
+    "extends": "eslint:recommended"
+}
+

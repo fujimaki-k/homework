@@ -2,6 +2,7 @@ package com.fujimakishouten.homework.controller
 
 import com.fujimakishouten.homework.entity.AuthorEntity
 import com.fujimakishouten.homework.service.AuthorService
+import com.fujimakishouten.homework.service.BookService
 import com.fujimakishouten.homework.service.SanitizeService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
@@ -12,6 +13,9 @@ import org.springframework.web.servlet.ModelAndView
 class AuthorController {
     @Autowired
     lateinit var author: AuthorService;
+
+    @Autowired
+    lateinit var book: BookService;
 
     @GetMapping("/author", "/author/index")
     fun index(model: ModelAndView, @RequestParam name: String?): ModelAndView {
@@ -72,10 +76,20 @@ class AuthorController {
     @GetMapping("/author/remove/{author_id}")
     fun remove(model: ModelAndView, @PathVariable author_id: Int): ModelAndView {
         val data = author.findById(author_id)
-        if (data != null) {
-            author.delete(data)
+        if (data == null) {
+            model.viewName = "redirect:/author"
+
+            return model
         }
 
+        val books = book.search(null, author_id, null)
+        if (books.size > 0) {
+            model.viewName = "author/remove"
+            model.addObject("author", data)
+
+            return model
+        }
+        author.delete(data)
         model.viewName = "redirect:/author"
 
         return model
