@@ -23,9 +23,10 @@
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
 
     <!-- Styles -->
-    <!--
-    <link rel="stylesheet" type="text/css" href="./styles/style.css" />
-    -->
+    <link rel="stylesheet" type="text/css" href="/styles/style.css" />
+
+    <!-- JavaScript -->
+    <script type="text/javascript" src="/javascripts/application.js"></script>
 </head>
 
 <body>
@@ -46,47 +47,52 @@
     </div>
 </header>
 
-<form method="post" action="/book/edit" class="form-horizonal container" th:action="${#httpServletRequest.requestURI}">
-    <fieldset>
-        <legend>Books</legend>
+<div class="container">
+    <div class="page-header">
+        <h2>Book</h2>
+    </div>
+    <form method="post" action="/book/edit" class="form-horizonal container" th:action="${#httpServletRequest.requestURI}">
+        <fieldset>
+            <div class="alert alert-danger" th:if="${errors != null and !errors.isEmpty()}">
+                <h4><span class="material-icons">error_outline</span> Error</h4>
+                <p>エラーが発生しました。</p>
+                <p>入力内容をご確認のうえ、もう一度お試しください。</p>
+            </div>
 
-        <div class="alert alert-danger" th:if="${errors != null and !errors.isEmpty()}">
-            <h4><span class="material-icons">error_outline</span> Error</h4>
-            <p>エラーが発生しました。</p>
-            <p>入力内容をご確認のうえ、もう一度お試しください。</p>
-        </div>
-
-        <div class="form-group" th:classappend="${errors != null and errors.containsKey('title') ? 'has-error' : null}">
-            <label for="title" class="col-lg-2 col-md-2">タイトル</label>
-            <div class="col-lg-10 col-md-10">
-                <input id="title" name="title" type="text" value="" required="required" minlength="1" maxlength="255" class="form-control" placeholder="書籍のタイトル（255 文字以内）※必須" th:value="${book.title}" />
-                <p class="text-danger" th:if="${errors != null and errors.containsKey('title')}">タイトルは 1 文字以上 255 文字以内で入力してください</p>
+            <div class="form-group" th:classappend="${errors != null and errors.containsKey('title') ? 'has-error' : null}">
+                <label for="title" class="col-lg-2 col-md-2">タイトル</label>
+                <div class="col-lg-10 col-md-10">
+                    <input id="title" name="title" type="text" value="" required="required" minlength="1" maxlength="255" class="form-control" placeholder="書籍のタイトル（255 文字以内）※必須" th:value="${book.title}" />
+                    <p class="text-danger" th:if="${errors != null and errors.containsKey('title')}">タイトルは 1 文字以上 255 文字以内で入力してください</p>
+                </div>
             </div>
-        </div>
-        <div class="form-group" th:classappend="${errors != null and errors.containsKey('author_id') ? 'has-error' : null}">
-            <label for="author" class="col-lg-2 col-md-2">著者</label>
-            <div class="col-lg-10 col-md-10">
-                <select id="author" name="author_id" class="form-control">
-                    <option th:each="author : ${authors}" value="" th:value="${author.author_id}" th:attrappend="selected=${book.author_id == author.author_id ? 'selected' : null}">[[${author.name}]]</option>
-                </select>
-                <p class="text-danger" th:if="${errors != null and errors.containsKey('author_id')}">著者を正しく選択してください</p>
+            <div class="form-group" th:classappend="${errors != null and errors.containsKey('author_id') ? 'has-error' : null}">
+                <label for="author" class="col-lg-2 col-md-2">著者</label>
+                <div class="col-lg-10 col-md-10">
+                    <select id="author" name="author_id" class="form-control">
+                        <option th:each="author : ${authors}" value="" th:value="${author.author_id}" th:attrappend="selected=${book.author_id == author.author_id ? 'selected' : null}">[[${author.name}]]</option>
+                    </select>
+                    <p class="text-danger" th:if="${errors != null and errors.containsKey('author_id')}">著者を正しく選択してください</p>
+                </div>
             </div>
-        </div>
-        <div class="form-group" th:classappend="${errors != null and errors.containsKey('publisher_id') ? 'has-error' : null}">
-            <label for="publisher" class="col-lg-2 col-md-2">出版社</label>
-            <div class="col-lg-10 col-md-10">
-                <select id="publisher" name="publisher_id" class="form-control">
-                    <option th:each="publisher : ${publishers}" value="" th:value="${publisher.publisher_id}" th:attrappend="selected=${book.publisher_id == publisher.publisher_id ? 'selected' : null}">[[${publisher.name}]]</option>
-                </select>
-                <p class="text-danger" th:if="${errors != null and errors.containsKey('publisher_id')}">出版社を正しく選択してください</p>
+            <div class="form-group" th:classappend="${errors != null and errors.containsKey('publisher_id') ? 'has-error' : null}">
+                <label for="publisher" class="col-lg-2 col-md-2">出版社</label>
+                <div class="col-lg-10 col-md-10">
+                    <select id="publisher" name="publisher_id" class="form-control">
+                        <option th:each="publisher : ${publishers}" value="" th:value="${publisher.publisher_id}" th:attrappend="selected=${book.publisher_id == publisher.publisher_id ? 'selected' : null}">[[${publisher.name}]]</option>
+                    </select>
+                    <p class="text-danger" th:if="${errors != null and errors.containsKey('publisher_id')}">出版社を正しく選択してください</p>
+                </div>
             </div>
-        </div>
-        <div class="form-group">
-            <div class="col-lg-12 col-md-12 text-right">
-                <button id="button" type="submit" class="btn btn-primary">保存する</button>
+            <div class="form-group">
+                <div class="col-lg-12 col-md-12 text-right">
+                    <button id="button" type="submit" class="btn btn-primary">
+                        <span class="material-icons">save_alt</span> 保存する
+                    </button>
+                </div>
             </div>
-        </div>
-    </fieldset>
-</form>
+        </fieldset>
+    </form>
+</div>
 </body>
 </html>

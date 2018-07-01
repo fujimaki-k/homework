@@ -1,0 +1,19 @@
+@charset "UTF-8";
+
+.material-icons {
+    vertical-align: bottom;
+}
+
+div.add a.btn {
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+div.form-group input, div.form-group select {
+    margin-bottom: 1em;
+}
+
+div.form-group p.text-danger {
+    margin-top: -1em;
+    margin-bottom: 1em;
+}

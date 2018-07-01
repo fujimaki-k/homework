@@ -23,9 +23,10 @@
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
 
     <!-- Styles -->
-    <!--
-    <link rel="stylesheet" type="text/css" href="./styles/style.css" />
-    -->
+    <link rel="stylesheet" type="text/css" href="/styles/style.css" />
+
+    <!-- JavaScript -->
+    <script type="text/javascript" src="/javascripts/application.js"></script>
 </head>
 
 <body>
@@ -46,29 +47,34 @@
     </div>
 </header>
 
-<form method="post" action="/author/edit" class="form-horizonal container" th:action="${#httpServletRequest.requestURI}">
-    <fieldset>
-        <legend>Authors</legend>
-
-        <div class="alert alert-danger" th:if="${errors != null and !errors.isEmpty()}">
-            <h4><span class="material-icons">error_outline</span> Error</h4>
-            <p>エラーが発生しました。</p>
-            <p>入力内容をご確認のうえ、もう一度お試しください。</p>
-        </div>
-
-        <div class="form-group" th:classappend="${errors != null and errors.containsKey('name') ? 'has-error' : null}">
-            <label for="name" class="col-lg-2 col-md-2">著者名</label>
-            <div class="col-lg-10 col-md-10">
-                <input id="name" name="name" type="text" value="" required="required" minlength="1" maxlength="255" class="form-control" placeholder="著者名（255 文字以内）※必須" th:value="${author.name}" />
-                <p class="text-danger" th:if="${errors != null and errors.containsKey('name')}">著者名は 1 文字以上 255 文字以内で入力してください</p>
+<div class="container">
+    <div class="page-header">
+        <h2>Author</h2>
+    </div>
+    <form method="post" action="/author/edit" class="form-horizonal container" th:action="${#httpServletRequest.requestURI}">
+        <fieldset>
+            <div class="alert alert-danger" th:if="${errors != null and !errors.isEmpty()}">
+                <h4><span class="material-icons">error_outline</span> Error</h4>
+                <p>エラーが発生しました。</p>
+                <p>入力内容をご確認のうえ、もう一度お試しください。</p>
             </div>
-        </div>
-        <div class="form-group">
-            <div class="col-lg-12 col-md-12 text-right">
-                <button id="button" type="submit" class="btn btn-primary">保存する</button>
+
+            <div class="form-group" th:classappend="${errors != null and errors.containsKey('name') ? 'has-error' : null}">
+                <label for="name" class="col-lg-2 col-md-2">著者名</label>
+                <div class="col-lg-10 col-md-10">
+                    <input id="name" name="name" type="text" value="" required="required" minlength="1" maxlength="255" class="form-control" placeholder="著者名（255 文字以内）※必須" th:value="${author.name}" />
+                    <p class="text-danger" th:if="${errors != null and errors.containsKey('name')}">著者名は 1 文字以上 255 文字以内で入力してください</p>
+                </div>
             </div>
-        </div>
-    </fieldset>
-</form>
+            <div class="form-group">
+                <div class="col-lg-12 col-md-12 text-right">
+                    <button id="button" type="submit" class="btn btn-primary">
+                        <span class="material-icons">save_alt</span> 保存する
+                    </button>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</div>
 </body>
 </html>
