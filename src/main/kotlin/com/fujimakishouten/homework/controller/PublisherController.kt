@@ -3,7 +3,6 @@ package com.fujimakishouten.homework.controller
 import com.fujimakishouten.homework.entity.PublisherEntity
 import com.fujimakishouten.homework.service.BookService
 import com.fujimakishouten.homework.service.PublisherService
-import com.fujimakishouten.homework.service.SanitizeService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.*
@@ -77,7 +76,7 @@ class PublisherController {
     fun remove(model: ModelAndView, @PathVariable publisher_id: Int): ModelAndView {
         val data = publisher.findById(publisher_id)
         if (data == null) {
-            model.viewName = "redirect:/author"
+            model.viewName = "redirect:/publisher"
 
             return model
         }
@@ -90,7 +89,7 @@ class PublisherController {
             return model
         }
         publisher.delete(data)
-        model.viewName = "redirect:/author"
+        model.viewName = "redirect:/publisher"
 
         return model
     }

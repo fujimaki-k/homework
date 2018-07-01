@@ -203,4 +203,11 @@ class AuthorControllerTests {
         val toTrElements = Jsoup.parse(toResponse).body().select("tbody tr")
         assertThat(toTrElements).hasSize(3)
     }
+
+    @Test
+    fun ShouldNotDeleteActiveAuthor() {
+        val response = mock.perform(get("/author/remove/1")).andReturn().response.getContentAsString()
+        val pElement = Jsoup.parse(response).body().selectFirst("div.alert-danger p")
+        assertThat(pElement.text()).contains("削除できません")
+    }
 }

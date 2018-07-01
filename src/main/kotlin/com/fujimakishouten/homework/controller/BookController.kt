@@ -4,7 +4,6 @@ import com.fujimakishouten.homework.entity.BookEntity
 import com.fujimakishouten.homework.service.AuthorService
 import com.fujimakishouten.homework.service.BookService
 import com.fujimakishouten.homework.service.PublisherService
-import com.fujimakishouten.homework.service.SanitizeService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.*
